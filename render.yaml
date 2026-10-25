@@ -45,5 +45,5 @@ services:
 databases:
   - name: smartgrade-db
     databaseName: smartgrade
-    user: postgres
+    user: smartgrade_admin
     plan: free
