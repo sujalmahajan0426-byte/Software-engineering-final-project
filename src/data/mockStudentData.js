@@ -64,15 +64,15 @@ export const streakData = Array.from({ length: 30 }, (_, i) => ({
 
 // Lecture-wise attendance summary for subjects
 export const attendanceSummary = [
-    { subject: 'Python Programming', total: 40, present: 36 },
-    { subject: 'Java Programming', total: 35, present: 28 },
-    { subject: 'Calculus II', total: 45, present: 32 }, // Below 80% (71%)
-    { subject: 'Software Engineering', total: 30, present: 28 },
-    { subject: 'Computer Networks', total: 38, present: 33 },
+    { subject: 'Software Engineering', total: 36, present: 33 },
+    { subject: 'Data Wrangling', total: 32, present: 29 },
+    { subject: 'DSA', total: 40, present: 36 },
+    { subject: 'PS', total: 28, present: 24 },
+    { subject: 'OS', total: 35, present: 30 },
 ];
 
 // Recent individual lectures
-const recentSubjects = ['Python Programming', 'Java Programming', 'Calculus II', 'Software Engineering', 'Computer Networks'];
+const recentSubjects = ['Software Engineering', 'Data Wrangling', 'DSA', 'PS', 'OS'];
 export const attendanceData = Array.from({ length: 20 }, (_, i) => {
     const d = new Date();
     d.setDate(d.getDate() - Math.floor(i / 3)); // roughly 3 lectures a day

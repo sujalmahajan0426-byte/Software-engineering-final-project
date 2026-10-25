@@ -2,13 +2,33 @@ import React, { useState } from 'react';
 import { atRiskStudents } from '../../data/mockTeacherData';
 import { MdWarning, MdTrendingDown, MdSend, MdTrendingFlat, MdTrendingUp } from 'react-icons/md';
 import { toast } from 'react-toastify';
+import { API_BASE_URL } from '../../utils/apiConfig';
 
 export default function AtRiskStudents() {
     const [notified, setNotified] = useState({});
 
-    const notifyParent = (id, name) => {
-        toast.success(`Automated SMS & Email sent to ${name}'s parents.`);
-        setNotified({ ...notified, [id]: true });
+    const notifyParent = async (id, student) => {
+        try {
+            const res = await fetch(`${API_BASE_URL}/api/messages/alert-parent`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    studentName: student.name,
+                    subject: student.subject,
+                    score: student.score,
+                    trend: student.trend
+                })
+            });
+            if (res.ok) {
+                toast.success(`⚠️ Alert sent to ${student.name}'s parents. Notification posted!`);
+                setNotified({ ...notified, [id]: true });
+            } else {
+                toast.error('Failed to send alert');
+            }
+        } catch (err) {
+            console.error('Alert error:', err);
+            toast.error('Could not connect to server');
+        }
     };
 
     const handleComingSoon = () => toast.info('🚀 Feature coming soon!');
@@ -87,7 +107,7 @@ export default function AtRiskStudents() {
                                                 View Insights
                                             </button>
                                             <button
-                                                onClick={() => notifyParent(student.id, student.name)}
+                                                onClick={() => notifyParent(student.id, student)}
                                                 disabled={notified[student.id]}
                                                 className={`p-2 rounded-lg font-semibold text-sm flex items-center gap-2 border transition-all
                            ${notified[student.id]

@@ -1,41 +1,80 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { chatMessages } from '../../data/mockParentData';
 import { MdSend, MdPerson, MdFamilyRestroom } from 'react-icons/md';
 import { toast } from 'react-toastify';
+import { API_BASE_URL } from '../../utils/apiConfig';
 
 export default function MessageTeacher() {
-    const [messages, setMessages] = useState(chatMessages);
+    const [messages, setMessages] = useState([]);
     const [input, setInput] = useState('');
+    const [loading, setLoading] = useState(true);
     const endOfMessagesRef = useRef(null);
+
+    const fetchMessages = async () => {
+        try {
+            const res = await fetch(`${API_BASE_URL}/api/messages`);
+            if (res.ok) {
+                const data = await res.json();
+                const dbMessages = (data.data || []).map(m => ({
+                    id: m.id,
+                    sender: m.senderRole === 'PARENT' ? 'parent' : 'teacher',
+                    text: m.content,
+                    time: new Date(m.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                }));
+                setMessages(dbMessages);
+            }
+        } catch (e) {
+            console.error('Failed to fetch messages:', e);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchMessages();
+        const interval = setInterval(fetchMessages, 3000);
+        return () => clearInterval(interval);
+    }, []);
 
     useEffect(() => {
         endOfMessagesRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [messages]);
 
-    const handleSend = (e) => {
+    const handleSend = async (e) => {
         e.preventDefault();
         if (!input.trim()) return;
 
-        // Add user message
-        const newMsg = {
-            id: Date.now(),
-            sender: 'parent',
-            text: input,
-            time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-        };
-
-        setMessages([...messages, newMsg]);
+        const content = input.trim();
         setInput('');
 
-        // Simulate teacher typing & replying
-        setTimeout(() => {
-            setMessages(prev => [...prev, {
-                id: Date.now() + 1,
-                sender: 'teacher',
-                text: "Thank you for letting me know. I'll make sure to monitor Arjun's progress on those exercises.",
-                time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-            }]);
-        }, 2000);
+        // Optimistic UI update
+        const optimisticMsg = {
+            id: Date.now(),
+            sender: 'parent',
+            text: content,
+            time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        };
+        setMessages(prev => [...prev, optimisticMsg]);
+
+        try {
+            const res = await fetch(`${API_BASE_URL}/api/messages`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    content,
+                    senderRole: 'PARENT',
+                    senderName: 'Mr. Patil'
+                })
+            });
+            if (res.ok) {
+                toast.success('Message sent to Prof. Sharma!');
+                fetchMessages();
+            } else {
+                toast.error('Failed to deliver message');
+            }
+        } catch (err) {
+            console.error('Message error:', err);
+            toast.error('Could not send message');
+        }
     };
 
     const sendQuickReply = (text) => {
@@ -45,8 +84,8 @@ export default function MessageTeacher() {
     return (
         <div className="max-w-4xl mx-auto animate-fade-in relative pb-10 sm:h-[calc(100vh-140px)] flex flex-col">
             <div className="mb-6 shrink-0">
-                <h1 className="text-3xl font-bold text-slate-800 mb-2">Message Teacher</h1>
-                <p className="text-slate-500">Directly communicate with Mrs. Sharma about Arjun's learning.</p>
+                <h1 className="text-3xl font-bold text-slate-800 mb-2">Message Faculty</h1>
+                <p className="text-slate-500">Directly communicate with Prof. Sharma about Arjun's learning and performance.</p>
             </div>
 
             <div className="bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col overflow-hidden flex-1 relative">
@@ -55,20 +94,29 @@ export default function MessageTeacher() {
                 <div className="px-6 py-4 border-b border-slate-100 bg-slate-50 flex items-center justify-between shrink-0">
                     <div className="flex items-center gap-4">
                         <div className="relative">
-                            <div className="w-12 h-12 rounded-full bg-brand-green/20 text-brand-green flex items-center justify-center border-2 border-white shadow-sm">
+                            <div className="w-12 h-12 rounded-full bg-brand-green/20 text-brand-green flex items-center justify-center border-2 border-white shadow-sm font-bold">
                                 <MdPerson className="w-7 h-7" />
                             </div>
                             <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></div>
                         </div>
                         <div>
-                            <h2 className="text-lg font-bold text-slate-800">Mrs. Sharma</h2>
-                            <p className="text-xs font-semibold text-slate-500 uppercase tracking-widest">Homeroom • Science & Maths</p>
+                            <h2 className="text-lg font-bold text-slate-800">Prof. Sharma</h2>
+                            <p className="text-xs font-semibold text-slate-500 uppercase tracking-widest">Faculty • AIML 2nd Year</p>
                         </div>
                     </div>
+                    <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">
+                        ● Online
+                    </span>
                 </div>
 
                 {/* Chat Area */}
                 <div className="flex-1 p-6 overflow-y-auto bg-slate-50/50 space-y-6">
+                    {messages.length === 0 && !loading && (
+                        <div className="text-center text-slate-400 py-12">
+                            <p className="text-sm">No messages yet. Send a message to start the conversation with the faculty!</p>
+                        </div>
+                    )}
+
                     {messages.map((msg) => (
                         <div key={msg.id} className={`flex max-w-[80%] ${msg.sender === 'parent' ? 'ml-auto justify-end' : 'mr-auto justify-start'}`}>
                             <div className={`flex items-end gap-2 ${msg.sender === 'parent' ? 'flex-row-reverse' : 'flex-row'}`}>
@@ -95,7 +143,7 @@ export default function MessageTeacher() {
 
                 {/* Quick Replies */}
                 <div className="px-6 py-3 bg-white border-t border-slate-100 flex gap-2 overflow-x-auto shrink-0 no-scrollbar">
-                    {["Can we schedule a meeting?", "Thank you for the update.", "How can I help at home?"].map((text, i) => (
+                    {["Can we schedule a meeting?", "Thank you for the update.", "How can I help at home?", "I saw the alert regarding Arjun's DSA score."].map((text, i) => (
                         <button
                             key={i}
                             onClick={() => sendQuickReply(text)}
@@ -112,7 +160,7 @@ export default function MessageTeacher() {
                         rows="1"
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
-                        placeholder="Type a message to Mrs. Sharma..."
+                        placeholder="Type a message to Prof. Sharma..."
                         className="w-full bg-slate-100 border-transparent focus:bg-white focus:border-brand-blue focus:ring-2 focus:ring-blue-100 rounded-xl px-4 py-3 outline-none resize-none min-h-[50px] transition-all"
                         onKeyDown={(e) => {
                             if (e.key === 'Enter' && !e.shiftKey) {

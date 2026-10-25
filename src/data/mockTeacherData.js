@@ -13,7 +13,7 @@ export const assignments = [
 ];
 
 export const recentActivity = [
-    { id: 6, student: 'Sujal M.', action: 'flagged for manual review', assignment: 'Calculus: Derivatives Practice', time: 'Just now', error: true },
+    { id: 6, student: 'Pravin K.', action: 'flagged for manual review', assignment: 'Calculus: Derivatives Practice', time: 'Just now', error: true },
     { id: 1, student: 'Arjun P.', action: 'submitted', assignment: 'Maths Chapter 4 Quiz', time: '10 mins ago', grade: 'A+' },
     { id: 2, student: 'Priya S.', action: 'viewed feedback', assignment: 'Science Lab Report', time: '45 mins ago' },
     { id: 3, student: 'Rohan K.', action: 'submitted', assignment: 'Maths Chapter 4 Quiz', time: '1 hour ago', grade: 'B-' },
@@ -22,11 +22,12 @@ export const recentActivity = [
 ];
 
 export const atRiskStudents = [
-    { id: 's1', name: 'Rohan Kumar', rollNo: '12', class: '10A', subject: 'Maths', score: 45, trend: -12, status: 'critical' },
-    { id: 's2', name: 'Neha Sharma', rollNo: '24', class: '10A', subject: 'Science', score: 48, trend: -8, status: 'warning' },
-    { id: 's3', name: 'Aditya Patel', rollNo: '05', class: '10A', subject: 'History', score: 52, trend: -15, status: 'warning' },
-    { id: 's4', name: 'Isha Gupta', rollNo: '18', class: '10A', subject: 'English', score: 40, trend: -5, status: 'critical' },
-    { id: 's5', name: 'Kabir Singh', rollNo: '31', class: '10A', subject: 'Maths', score: 55, trend: -10, status: 'warning' }
+    { id: 's0', name: 'Arjun Patil', rollNo: 'C250', class: 'AIML 2nd Year', subject: 'DSA', score: 42, trend: -14, status: 'critical' },
+    { id: 's1', name: 'Rohan Kumar', rollNo: '12', class: 'AIML 2nd Year', subject: 'Maths', score: 45, trend: -12, status: 'critical' },
+    { id: 's2', name: 'Neha Sharma', rollNo: '24', class: 'AIML 2nd Year', subject: 'Science', score: 48, trend: -8, status: 'warning' },
+    { id: 's3', name: 'Aditya Patel', rollNo: '05', class: 'AIML 2nd Year', subject: 'History', score: 52, trend: -15, status: 'warning' },
+    { id: 's4', name: 'Isha Gupta', rollNo: '18', class: 'AIML 2nd Year', subject: 'English', score: 40, trend: -5, status: 'critical' },
+    { id: 's5', name: 'Kabir Singh', rollNo: '31', class: 'AIML 2nd Year', subject: 'Maths', score: 55, trend: -10, status: 'warning' }
 ];
 
 export const classAnalytics = {
@@ -38,11 +39,11 @@ export const classAnalytics = {
         { name: 'Needs Help (<60)', value: 2, fill: '#C5192D' }
     ],
     subjectAverages: [
-        { subject: 'Science', avg: 82, target: 75 },
-        { subject: 'Maths', avg: 68, target: 75 },
-        { subject: 'English', avg: 79, target: 75 },
-        { subject: 'History', avg: 72, target: 75 },
-        { subject: 'Hindi', avg: 85, target: 75 }
+        { subject: 'Software Engineering', avg: 82, target: 75 },
+        { subject: 'Data Wrangling', avg: 78, target: 75 },
+        { subject: 'DSA', avg: 74, target: 75 },
+        { subject: 'PS', avg: 72, target: 75 },
+        { subject: 'OS', avg: 80, target: 75 }
     ],
     performanceOverTime: [
         { week: 'W1', avgScore: 68 },
@@ -65,7 +66,7 @@ export const roster = Array.from({ length: 45 }, (_, i) => ({
     id: `stu-${i + 1}`,
     name: `Student ${i + 1}`,
     rollNo: String(i + 1).padStart(2, '0'),
-    class: '10A',
+    class: 'AIML 2nd Year',
     avgScore: Math.floor(Math.random() * (95 - 55 + 1) + 55),
     attendance: Math.floor(Math.random() * (100 - 85 + 1) + 85)
 }));

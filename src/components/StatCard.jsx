@@ -1,34 +1,44 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { MdTrendingUp, MdTrendingDown } from 'react-icons/md';
+import AnimatedCounter from './AnimatedCounter';
 
-export default function StatCard({ title, value, icon, trend, colorClass = "text-brand-blue", bgClass = "bg-blue-50" }) {
+export default function StatCard({ title, value, icon, trend, colorClass = "text-blue-600", bgClass = "bg-blue-50 border-blue-100" }) {
+    const renderValue = () => {
+        if (typeof value === 'number') return <AnimatedCounter end={value} duration={1000} />;
+        if (typeof value === 'string' && value.endsWith('%')) {
+            const n = parseInt(value, 10);
+            if (!isNaN(n)) return <AnimatedCounter end={n} suffix="%" duration={1000} />;
+        }
+        return value;
+    };
+
     return (
-        <motion.div 
-            initial={{ opacity: 0, y: 15 }}
+        <motion.div
+            initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            whileHover={{ y: -5 }}
-            className="glass-card p-6 group"
+            whileHover={{ y: -3 }}
+            transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+            className="glass-card p-5 group bg-white"
         >
             <div className="flex items-start justify-between">
                 <div>
-                    <p className="text-sm font-semibold text-slate-500 dark:text-slate-400 mb-2">{title}</p>
-                    <h3 className="text-3xl font-black text-slate-800 dark:text-slate-100 tracking-tight">{value}</h3>
-
+                    <p className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1.5">{title}</p>
+                    <h3 className="text-2xl font-black text-slate-800 tracking-tight">
+                        {renderValue()}
+                    </h3>
                     {trend !== undefined && (
-                        <div className={`flex items-center gap-1.5 mt-3 text-xs font-bold px-2.5 py-1 rounded-full inline-flex
-              ${trend > 0 ? 'text-green-700 bg-green-100/50' : 'text-red-600 bg-red-100/50'}`}>
-                            {trend > 0 ? <MdTrendingUp className="w-4 h-4" /> : <MdTrendingDown className="w-4 h-4" />}
-                            <span>{Math.abs(trend)}% vs last month</span>
+                        <div className={`flex items-center gap-1 mt-2 text-[11px] font-semibold px-2 py-0.5 rounded-full inline-flex border
+                            ${trend >= 0 ? 'text-emerald-700 bg-emerald-50 border-emerald-100' : 'text-rose-600 bg-rose-50 border-rose-100'}`}
+                        >
+                            {trend >= 0 ? <MdTrendingUp className="w-3 h-3" /> : <MdTrendingDown className="w-3 h-3" />}
+                            <span>{Math.abs(trend)}% this month</span>
                         </div>
                     )}
                 </div>
-
-                <div className={`p-4 rounded-2xl ${bgClass} ${colorClass} group-hover:rotate-6 group-hover:scale-110 shadow-sm transition-all duration-300`}>
-                    <div className="w-6 h-6 flex items-center justify-center">
-                        {icon}
-                    </div>
+                <div className={`p-3 rounded-xl border ${bgClass} ${colorClass} transition-transform duration-300 group-hover:scale-105`}>
+                    {icon}
                 </div>
             </div>
         </motion.div>

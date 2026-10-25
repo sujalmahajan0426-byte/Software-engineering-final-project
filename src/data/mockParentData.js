@@ -6,18 +6,18 @@ export const parentStats = {
 };
 
 export const childInfo = {
-    name: 'Arjun Patel',
-    class: 'B.Tech CS (2nd Year)',
-    school: 'National Institute of Technology',
-    rollNo: '2023CS045'
+    name: 'Arjun Patil',
+    class: 'B.Tech AIML (2nd Year)',
+    school: "SVKM's NMIMS Shirpur",
+    rollNo: 'C250'
 };
 
 export const subjectPerformance = [
-    { subject: 'Python Programming', score: 84, status: 'excellent' },
-    { subject: 'Software Engineering', score: 79, status: 'good' },
-    { subject: 'Java Programming', score: 71, status: 'average' },
-    { subject: 'Computer Networks', score: 68, status: 'average' },
-    { subject: 'Calculus II', score: 55, status: 'poor' }
+    { subject: 'Software Engineering', score: 84, status: 'excellent' },
+    { subject: 'Data Wrangling', score: 79, status: 'good' },
+    { subject: 'DSA', score: 76, status: 'good' },
+    { subject: 'PS', score: 71, status: 'average' },
+    { subject: 'OS', score: 82, status: 'excellent' }
 ];
 
 export const progressTrend = [
@@ -43,14 +43,14 @@ export const recentFeedback = [
 
 // Lecture-wise attendance summary for subjects
 export const attendanceSummary = [
-    { subject: 'Python Programming', total: 40, present: 36 },
-    { subject: 'Java Programming', total: 35, present: 28 },
-    { subject: 'Calculus II', total: 45, present: 32 }, // Below 80%
-    { subject: 'Software Engineering', total: 30, present: 28 },
-    { subject: 'Computer Networks', total: 38, present: 33 },
+    { subject: 'Software Engineering', total: 36, present: 33 },
+    { subject: 'Data Wrangling', total: 32, present: 29 },
+    { subject: 'DSA', total: 40, present: 36 },
+    { subject: 'PS', total: 28, present: 24 },
+    { subject: 'OS', total: 35, present: 30 },
 ];
 
-const recentSubjects = ['Python Programming', 'Java Programming', 'Calculus II', 'Software Engineering', 'Computer Networks'];
+const recentSubjects = ['Software Engineering', 'Data Wrangling', 'DSA', 'PS', 'OS'];
 export const attendanceTracker = Array.from({ length: 20 }, (_, i) => {
     const d = new Date();
     d.setDate(d.getDate() - Math.floor(i / 3)); // roughly 3 lectures a day

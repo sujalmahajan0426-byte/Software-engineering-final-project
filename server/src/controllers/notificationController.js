@@ -3,7 +3,20 @@ import { sendResponse, sendError } from '../utils/responseHelper.js';
 
 export const listNotifications = async (req, res) => {
     try {
+        const { role } = req.query;
+        let where = {};
+        if (role) {
+            const r = role.toUpperCase();
+            // Match role specifically or null (broadcast)
+            where = {
+                OR: [
+                    { forRole: r },
+                    { forRole: null }
+                ]
+            };
+        }
         const notifications = await prisma.notification.findMany({
+            where,
             orderBy: { createdAt: 'desc' },
             take: 20
         });

@@ -11,6 +11,7 @@ import DemoBadge from './components/DemoBadge';
 import Sidebar from './components/Sidebar';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import PortalChatbot from './components/PortalChatbot';
+import AmbientBackground from './components/AmbientBackground';
 
 // Pages
 import LandingPage from './pages/LandingPage';
@@ -33,6 +34,7 @@ import MyStudents from './pages/teacher/MyStudents';
 import ClassAnalytics from './pages/teacher/ClassAnalytics';
 import AtRiskStudents from './pages/teacher/AtRiskStudents';
 import Reports from './pages/teacher/Reports';
+import TeacherMessages from './pages/teacher/TeacherMessages';
 
 // Parent Pages
 import ParentDashboard from './pages/parent/ParentDashboard';
@@ -44,9 +46,9 @@ import MessageTeacher from './pages/parent/MessageTeacher';
 
 const MainLayout = () => {
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen relative z-10">
       <Navbar />
-      <main className="flex-1 bg-slate-50">
+      <main className="flex-1 bg-transparent relative">
         <Outlet />
       </main>
       <Footer />
@@ -57,7 +59,7 @@ const MainLayout = () => {
 
 const PortalLayout = ({ role }) => {
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen relative z-10">
       <Navbar />
       <div className="flex flex-1 pt-[80px]">
         <Sidebar role={role} />
@@ -75,6 +77,7 @@ export default function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
+        <AmbientBackground />
         <Routes>
           {/* Public Routes */}
           <Route element={<MainLayout />}>
@@ -105,6 +108,7 @@ export default function App() {
               <Route path="/teacher/analytics" element={<ClassAnalytics />} />
               <Route path="/teacher/at-risk" element={<AtRiskStudents />} />
               <Route path="/teacher/reports" element={<Reports />} />
+              <Route path="/teacher/messages" element={<TeacherMessages />} />
             </Route>
           </Route>
 

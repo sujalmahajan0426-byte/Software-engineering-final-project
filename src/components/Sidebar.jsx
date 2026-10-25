@@ -26,6 +26,7 @@ const getLinks = (role) => {
                 { path: '/teacher/students', label: 'My Students', icon: <MdPeople /> },
                 { path: '/teacher/analytics', label: 'Class Analytics', icon: <MdAnalytics /> },
                 { path: '/teacher/at-risk', label: 'At-Risk Students', icon: <MdWarning /> },
+                { path: '/teacher/messages', label: 'Parent Messages', icon: <MdMessage /> },
                 { path: '/teacher/reports', label: 'Reports', icon: <MdInsertChartOutlined /> },
             ];
         case 'parent':
@@ -44,11 +45,11 @@ const getLinks = (role) => {
 
 const staggerContainer = {
     hidden: { opacity: 0 },
-    visible: { opacity: 1, transition: { staggerChildren: 0.1 } }
+    visible: { opacity: 1, transition: { staggerChildren: 0.08 } }
 };
 
 const slideRight = {
-    hidden: { opacity: 0, x: -10 },
+    hidden: { opacity: 0, x: -8 },
     visible: { opacity: 1, x: 0 }
 };
 
@@ -56,22 +57,22 @@ export default function Sidebar({ role }) {
     const links = getLinks(role);
 
     const getThemeClass = (isActive) => {
-        if (!isActive) return "text-slate-600 dark:text-slate-400 hover:bg-slate-100/50 dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-slate-200";
-        if (role === 'student') return "bg-gradient-to-r from-blue-50 to-indigo-50/30 dark:from-blue-900/40 dark:to-indigo-900/20 text-brand-blue dark:text-blue-400 shadow-sm font-bold border-l-4 border-brand-blue dark:border-blue-400";
-        if (role === 'teacher') return "bg-gradient-to-r from-green-50 to-teal-50/30 dark:from-green-900/40 dark:to-teal-900/20 text-brand-green dark:text-green-400 shadow-sm font-bold border-l-4 border-brand-green dark:border-green-400";
-        if (role === 'parent') return "bg-gradient-to-r from-orange-50 to-yellow-50/30 dark:from-orange-900/40 dark:to-yellow-900/20 text-orange-600 dark:text-orange-400 shadow-sm font-bold border-l-4 border-orange-500 dark:border-orange-400";
-        return "";
+        if (!isActive) return "text-slate-600 hover:bg-slate-50 hover:text-slate-900";
+        if (role === 'student') return "bg-blue-50 text-blue-700 shadow-xs font-bold border-l-4 border-blue-500";
+        if (role === 'teacher') return "bg-emerald-50 text-emerald-700 shadow-xs font-bold border-l-4 border-emerald-500";
+        if (role === 'parent') return "bg-indigo-50 text-indigo-700 shadow-xs font-bold border-l-4 border-indigo-500";
+        return "bg-slate-50 text-slate-900 font-bold border-l-4 border-slate-700";
     };
 
     return (
         <aside className="w-64 hidden md:block h-full shrink-0 relative z-10 pt-4">
-            <div className="sticky top-[100px] h-[calc(100vh-120px)] p-4 pr-0">
-                <div className="glass-panel h-full rounded-2xl rounded-r-none overflow-hidden shadow-sm">
+            <div className="sticky top-[96px] h-[calc(100vh-120px)] p-4 pr-0">
+                <div className="glass-panel h-full rounded-2xl rounded-r-none overflow-hidden shadow-xs bg-white/80">
                     <motion.nav 
                         variants={staggerContainer}
                         initial="hidden"
                         animate="visible"
-                        className="p-3 space-y-1.5 mt-2 overflow-y-auto h-full scrollbar-hide"
+                        className="p-3 space-y-1.5 mt-2 overflow-y-auto h-full"
                     >
                         {links.map((link) => (
                             <motion.div key={link.path} variants={slideRight}>
@@ -79,11 +80,11 @@ export default function Sidebar({ role }) {
                                     to={link.path}
                                     end={link.path === `/${role}`}
                                     className={({ isActive }) =>
-                                        `flex items-center gap-3.5 px-4 py-3 rounded-xl transition-all duration-300 ${getThemeClass(isActive)}`
+                                        `flex items-center gap-3.5 px-4 py-3 rounded-xl transition-all duration-200 ${getThemeClass(isActive)}`
                                     }
                                 >
-                                    <span className="text-xl transition-transform duration-300 group-hover:scale-110">{link.icon}</span>
-                                    <span className="tracking-wide text-sm">{link.label}</span>
+                                    <span className="text-xl transition-transform duration-200 group-hover:scale-105">{link.icon}</span>
+                                    <span className="tracking-wide text-sm font-semibold">{link.label}</span>
                                 </NavLink>
                             </motion.div>
                         ))}

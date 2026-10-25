@@ -1,9 +1,49 @@
-import React from 'react';
-import { notifications } from '../../data/mockParentData';
-import { MdWarning, MdNotifications, MdCheckCircle, MdInfo } from 'react-icons/md';
+import React, { useState, useEffect } from 'react';
+import { notifications as initialMockNotifications } from '../../data/mockParentData';
+import { MdWarning, MdNotifications, MdCheckCircle, MdInfo, MdChat } from 'react-icons/md';
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { API_BASE_URL } from '../../utils/apiConfig';
 
 export default function Notifications() {
+    const navigate = useNavigate();
+    const [allNotifications, setAllNotifications] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    const fetchNotifications = async () => {
+        try {
+            const res = await fetch(`${API_BASE_URL}/api/notifications?role=PARENT`);
+            if (res.ok) {
+                const data = await res.json();
+                const dbNotifs = (data.data || []).map(n => ({
+                    id: n.id,
+                    type: n.type === 'ALERT' ? 'critical' : n.type === 'MESSAGE' ? 'info' : 'warning',
+                    text: `${n.title} — ${n.message}`,
+                    time: new Date(n.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                    read: n.isRead,
+                    isReal: true,
+                    link: n.link || '/parent/message'
+                }));
+                // Real notifications first, then mock ones
+                setAllNotifications([...dbNotifs, ...initialMockNotifications]);
+            } else {
+                setAllNotifications(initialMockNotifications);
+            }
+        } catch (e) {
+            console.error('Failed to fetch notifications:', e);
+            setAllNotifications(initialMockNotifications);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchNotifications();
+        // Poll every 5s for new teacher alerts
+        const interval = setInterval(fetchNotifications, 5000);
+        return () => clearInterval(interval);
+    }, []);
+
     const handleComingSoon = () => toast.info('🚀 Feature coming soon!');
 
     const getIcon = (type) => {
@@ -18,7 +58,7 @@ export default function Notifications() {
     const getBgClass = (type, read) => {
         if (read) return 'bg-white border-slate-200';
         switch (type) {
-            case 'critical': return 'bg-red-50 border-red-200';
+            case 'critical': return 'bg-red-50 border-red-200 ring-2 ring-red-300';
             case 'warning': return 'bg-yellow-50 border-yellow-200';
             case 'success': return 'bg-green-50 border-green-200';
             case 'info': default: return 'bg-blue-50 border-blue-200';
@@ -38,7 +78,7 @@ export default function Notifications() {
             </div>
 
             <div className="space-y-4">
-                {notifications.map((notif) => (
+                {allNotifications.map((notif) => (
                     <div
                         key={notif.id}
                         className={`flex items-start gap-4 p-5 rounded-2xl border shadow-sm transition-all hover:shadow-md
@@ -57,18 +97,23 @@ export default function Notifications() {
                                 <span className="text-sm font-medium text-slate-500 whitespace-nowrap">{notif.time}</span>
                             </div>
 
-                            {!notif.read && (
-                                <div className="mt-3 flex gap-3">
-                                    <button onClick={handleComingSoon} className="text-sm font-bold text-brand-blue hover:text-blue-700 transition-colors">
-                                        View full details
+                            <div className="mt-3 flex items-center gap-3">
+                                {notif.type === 'critical' && (
+                                    <button
+                                        onClick={() => navigate('/parent/message')}
+                                        className="text-sm font-bold bg-brand-red hover:bg-red-600 text-white px-4 py-1.5 rounded-lg flex items-center gap-2 shadow-sm hover:shadow transition-all"
+                                    >
+                                        <MdChat className="w-4 h-4" />
+                                        Talk to Faculty
                                     </button>
-                                    {notif.type === 'critical' && (
-                                        <button onClick={handleComingSoon} className="text-sm font-bold bg-brand-red text-white px-3 py-1 rounded hover:bg-red-700 transition-colors">
-                                            Message Teacher
-                                        </button>
-                                    )}
-                                </div>
-                            )}
+                                )}
+                                <button
+                                    onClick={handleComingSoon}
+                                    className="text-sm font-bold text-brand-blue hover:text-blue-700 transition-colors"
+                                >
+                                    View full details
+                                </button>
+                            </div>
                         </div>
                     </div>
                 ))}

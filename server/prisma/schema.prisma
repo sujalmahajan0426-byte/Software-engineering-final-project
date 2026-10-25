@@ -56,6 +56,8 @@ model Assignment {
   question    String
   subject     String
   dueDate     DateTime
+  questionImage     String?  // base64 encoded image of the question
+  questionImageMime String?  // mime type of the question image
   
   // Relations
   classId     String
@@ -121,5 +123,15 @@ model Notification {
   link      String?
   isRead    Boolean  @default(false)
   userId    String?
+  forRole   String?  // "TEACHER" or "PARENT" — who should see this
   createdAt DateTime @default(now())
+}
+
+model Message {
+  id         String   @id @default(uuid())
+  content    String
+  senderRole String   // "TEACHER" or "PARENT"
+  senderName String
+  isRead     Boolean  @default(false)
+  createdAt  DateTime @default(now())
 }

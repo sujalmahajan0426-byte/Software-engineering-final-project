@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { API_BASE_URL } from '../utils/apiConfig';
 
 const AuthContext = createContext();
 
@@ -27,7 +28,7 @@ export function AuthProvider({ children }) {
                     setUser(parsedUser);
 
                     // Verify with backend
-                    const response = await fetch('http://localhost:5001/api/auth/me', {
+                    const response = await fetch(`${API_BASE_URL}/api/auth/me`, {
                         headers: { 'Authorization': `Bearer ${savedToken}` }
                     });
 
@@ -76,7 +77,7 @@ export function AuthProvider({ children }) {
 
     const login = async (role, email, password) => {
         try {
-            const response = await fetch('http://localhost:5001/api/auth/login', {
+            const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password })
@@ -110,7 +111,7 @@ export function AuthProvider({ children }) {
 
     const register = async ({ name, email, password, role }) => {
         try {
-            const response = await fetch('http://localhost:5001/api/auth/register', {
+            const response = await fetch(`${API_BASE_URL}/api/auth/register`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ name, email, password, role })
